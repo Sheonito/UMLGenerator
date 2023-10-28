@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <UMLEdgeElement name="line" style="position: absolute; width: 3px; background-color: rgb(154, 154, 154); transform-origin: left bottom; color: rgb(255, 255, 255); -unity-background-image-tint-color: rgb(255, 255, 255); height: 100px;" />
+    <UMLEdgeElement name="direction" style="position: absolute; width: 18px; background-image: url(&apos;project://database/Assets/Editor/%ED%99%94%EC%82%B4%ED%91%9C.png?fileID=2800000&amp;guid=350a0d7bee4466a4a82dc34442ced12c&amp;type=3#화살표&apos;); height: 18px; -unity-background-image-tint-color: rgb(154, 154, 154); background-color: rgba(255, 255, 255, 0);" />
+</ui:UXML>

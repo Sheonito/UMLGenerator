@@ -1,0 +1,23 @@
+{
+    "name": "UMLAutoGenerator.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:478a2357cc57436488a56e564b08d223",
+        "GUID:37180d43aa4b85c4b9076e2ef48a3b2a",
+        "GUID:97505fd80b553409c995f274ad2a533b",
+        "GUID:02f771204943f4a40949438e873e3eff",
+        "GUID:eecdf9bdfcb2949619db458f3e24c5e2",
+        "GUID:21b0c8d1703a94250bfac916590cea4f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

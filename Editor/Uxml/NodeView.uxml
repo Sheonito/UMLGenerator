@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Editor/NodeViewStyle.uss?fileID=7433441132597879392&amp;guid=d86a9f86f14364f44886f230a1d76d2a&amp;type=3#NodeViewStyle" />
+    <ui:VisualElement name="node-border" style="background-color: rgb(67, 67, 67); border-left-color: rgb(255, 202, 47); border-right-color: rgb(255, 202, 47); border-top-color: rgb(255, 202, 47); border-bottom-color: rgb(255, 202, 47); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; transform-origin: center; flex-shrink: 1; max-width: 100px; max-height: 100px; -unity-background-scale-mode: stretch-to-fill; align-items: center; flex-basis: auto; flex-grow: 0; flex-wrap: nowrap; width: 100px; height: 50px; justify-content: flex-start;">
+        <ui:VisualElement name="title" style="width: 100px; max-width: 100px; min-width: 100px; align-items: center;">
+            <ui:Label name="title-label" text="title" class="unity-text-element unity-label" style="width: 100px; max-width: 100px; align-items: center; justify-content: flex-start; position: relative; -unity-text-align: upper-center;" />
+            <ui:VisualElement name="title-button-container">
+                <ui:VisualElement name="collapse-button">
+                    <ui:VisualElement name="icon" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="contents" style="width: 100px; height: auto; position: relative; max-width: 100px; max-height: 100px; flex-shrink: 1; flex-basis: auto; flex-wrap: nowrap; align-items: center;">
+            <ui:VisualElement name="divider" class="horizontal" style="width: 100px; max-width: 100px; align-items: center;" />
+            <ui:VisualElement name="top" style="justify-content: flex-start; position: relative; width: 100px; max-width: 100px; min-width: 100px; align-items: center;">
+                <ui:VisualElement name="input" style="align-items: center; justify-content: flex-start;" />
+                <ui:VisualElement name="left" style="align-items: flex-start; flex-direction: row; justify-content: space-between; margin-top: -17px; margin-left: -5px; margin-right: -5px;">
+                    <ui:VisualElement name="right" style="align-items: flex-end; position: relative;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="output" style="justify-content: flex-start;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="selection-border" style="border-left-color: rgb(255, 255, 255); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); flex-shrink: 1;" />
+</ui:UXML>

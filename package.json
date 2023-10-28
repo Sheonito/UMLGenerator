@@ -1,0 +1,20 @@
+{
+  "name": "com.lucecita.sdk",
+  "version": "0.0.1",
+  "displayName": "UMLAutoGenerator",
+  "description": "AutoUMLGenerator SDK",
+  "dependencies": {
+    "com.unity.editorcoroutines": "1.0.0",
+    "com.unity.testtools.codecoverage": "1.2.3",
+    "com.unity.performance.profile-analyzer": "1.2.2",
+    "com.unity.visualscripting": "1.8.0",
+    "com.unity.timeline": "1.6.5"
+  },
+  "unity": "2021.3",
+  "keywords": [],
+  "author": {
+    "name": "Jaeho Choi",
+    "email": "cjh0798@gmail.com",
+    "url": ""
+  }
+}

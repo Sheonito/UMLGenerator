@@ -1,0 +1,40 @@
+#node-border {
+    background-color: rgb(58, 58, 58);
+    border-left-color: rgb(255, 83, 83);
+    border-right-color: rgb(255, 83, 83);
+    border-top-color: rgb(255, 83, 83);
+    border-bottom-color: rgb(255, 83, 83);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+}
+
+#info-label {
+    background-color: rgb(176, 158, 158);
+    color: rgb(0, 0, 0);
+    border-left-color: rgb(255, 83, 83);
+    border-right-color: rgb(255, 83, 83);
+    border-top-color: rgb(255, 83, 83);
+    border-bottom-color: rgb(255, 83, 83);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+}
+
+#input {
+    align-items: center;
+}
+
+#output {
+    align-items: center;
+}
+
+#left {
+    align-items: flex-start;
+}
+
+#right {
+    align-items: flex-end;
+}
