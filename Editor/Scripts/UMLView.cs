@@ -20,11 +20,12 @@ public class UMLView : GraphView
     public UMLView()
     {
         Insert(0, new GridBackground());
-
-        this.AddManipulator(new ContentZoomer());
-        this.AddManipulator(new ContentDragger());
-        this.AddManipulator(new SelectionDragger());
-        this.AddManipulator(new RectangleSelector());
+        
+        // [Now movable functions are not used]
+        // this.AddManipulator(new ContentZoomer());
+        // this.AddManipulator(new ContentDragger());
+        // this.AddManipulator(new SelectionDragger());
+        // this.AddManipulator(new RectangleSelector());
 
         var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Packages/com.lucecita.sdk/Editor/USS/UMLGenerator.uss");
         styleSheets.Add(styleSheet);

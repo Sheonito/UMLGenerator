@@ -31,9 +31,17 @@ public class UMLNode : Node
     public override void Select(VisualElement selectionContainer, bool additive)
     {
         base.Select(selectionContainer, additive);
-
         foreach (UMLNode node in m_umlView.nodes)
         {
+            node.border.style.borderTopColor = new Color(1f, 0.7921569f, 0.1843137f);
+            node.border.style.borderBottomColor = new Color(1f, 0.7921569f, 0.1843137f);
+            node.border.style.borderLeftColor = new Color(1f, 0.7921569f, 0.1843137f);
+            node.border.style.borderRightColor = new Color(1f, 0.7921569f, 0.1843137f);
+            node.border.style.borderTopWidth = 1;
+            node.border.style.borderBottomWidth = 1;
+            node.border.style.borderLeftWidth = 1;
+            node.border.style.borderRightWidth = 1;
+            
             if (node.edges.Count == 0)
                 continue;
 
@@ -62,7 +70,16 @@ public class UMLNode : Node
                 }
             }
         }
-
+        
+        border.style.borderTopColor = new Color(0.3840512f, 0.770284f, 0.8773585f);
+        border.style.borderBottomColor = new Color(0.3840512f, 0.770284f, 0.8773585f);
+        border.style.borderLeftColor = new Color(0.3840512f, 0.770284f, 0.8773585f);
+        border.style.borderRightColor = new Color(0.3840512f, 0.770284f, 0.8773585f);
+        border.style.borderTopWidth = 2;
+        border.style.borderBottomWidth = 2;
+        border.style.borderLeftWidth = 2;
+        border.style.borderRightWidth = 2;
+        
         edges.ForEach(edge => edge.edgeElements.ForEach(line => line.Select()));
     }
 
