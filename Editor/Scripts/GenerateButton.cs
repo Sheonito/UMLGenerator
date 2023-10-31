@@ -344,10 +344,13 @@ public class GenerateButton : Button
             }
             catch
             {
-                Debug.Log("methodInfo.DeclaringType: " + methodInfo.DeclaringType);
                 Debug.Log("methodInfo.DeclaringType.Module.Name: " + methodInfo.DeclaringType.Module.Name);
+                Debug.Log("methodInfo.DeclaringType: " + methodInfo.DeclaringType);
+                Debug.Log("methodInfo.Name: " + methodInfo.Name);
             }
-            
+
+            if (instructions == null)
+                return;
             
             foreach (var instruction in instructions)
             {
