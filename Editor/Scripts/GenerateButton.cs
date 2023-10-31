@@ -15,6 +15,7 @@ using UnityEngine;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 using Debug = UnityEngine.Debug;
+using IList = System.Collections.IList;
 
 public class GenerateButton : Button
 {
@@ -336,7 +337,17 @@ public class GenerateButton : Button
             if (isBuiltInDll)
                 return;
 
-            var instructions = methodInfo.GetInstructions();
+            IList<Instruction> instructions = null; 
+            try
+            {
+                instructions = methodInfo.GetInstructions();
+            }
+            catch
+            {
+                Debug.Log("methodInfo.DeclaringType: " + methodInfo.DeclaringType);
+                Debug.Log("methodInfo.DeclaringType.Module.Name: " + methodInfo.DeclaringType.Module.Name);
+            }
+            
             
             foreach (var instruction in instructions)
             {
