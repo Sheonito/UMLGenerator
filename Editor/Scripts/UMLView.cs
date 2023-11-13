@@ -21,9 +21,10 @@ public class UMLView : GraphView
     {
         Insert(0, new GridBackground());
         
-        // [Now movable functions are not used]
-        // this.AddManipulator(new ContentZoomer());
-        // this.AddManipulator(new ContentDragger());
+        this.AddManipulator(new ContentZoomer());
+        this.AddManipulator(new ContentDragger());
+        
+        // [Now Node movable functions are not used]
         // this.AddManipulator(new SelectionDragger());
         // this.AddManipulator(new RectangleSelector());
 

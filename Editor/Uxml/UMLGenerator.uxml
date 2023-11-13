@@ -1,7 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <Style src="project://database/Assets/Editor/UMLGenerator.uss?fileID=7433441132597879392&amp;guid=84cc197db768c3048833ac8abf5bf9ef&amp;type=3#UMLGenerator" />
+    <Style src="project://database/Packages/com.lucecita.sdk/Editor/USS/UMLGenerator.uss?fileID=7433441132597879392&amp;guid=84cc197db768c3048833ac8abf5bf9ef&amp;type=3#UMLGenerator" />
     <uie:Toolbar name="Toolbar">
         <UMLToolbarMenu text="Menu" name="toolbar-menu" />
+        <SaveUMLButton text="Save UML" style="border-left-width: 0; align-items: flex-end; left: 89%;" />
     </uie:Toolbar>
     <SplitView fixed-pane-initial-dimension="150" name="umlView-page" style="display: none;">
         <ui:VisualElement name="left-panel" style="width: auto;">
@@ -13,7 +14,7 @@
             <UMLView focusable="true" style="background-color: rgb(56, 56, 56); width: auto; height: auto; flex-grow: 1; position: relative; max-width: none; max-height: none; min-width: auto; min-height: auto;" />
         </ui:VisualElement>
     </SplitView>
-    <ui:VisualElement name="menu-page" style="align-items: center; justify-content: center; margin-top: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; flex-direction: column; flex-basis: auto;">
+    <ui:VisualElement name="menu-page" style="align-items: center; justify-content: center; margin-top: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; flex-direction: column; flex-basis: auto; display: flex;">
         <FolderObjectField type="UnityEngine.Object, UnityEngine.CoreModule" name="FolderObjectField" style="flex-grow: 1; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0;" />
         <ui:Button text="Add" display-tooltip-when-elided="true" name="Button-add" style="width: 100%; align-items: stretch; flex-direction: column; visibility: visible; justify-content: flex-start; flex-grow: 1;" />
         <GenerateButton text="Execute" name="Button-execute" style="flex-grow: 0; width: 100%;" />

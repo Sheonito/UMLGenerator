@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UMLAutoGenerator;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,7 +18,7 @@ public class UMLGenerator : EditorWindow
     {
         UMLGenerator window = GetWindow<UMLGenerator>();
         window.titleContent = new GUIContent("UMLGenerator");
-        window.minSize = window.maxSize = new Vector2(1200 * 0.9f,600 * 0.9f);
+        window.minSize = window.maxSize = new Vector2(1200,600);
     }
 
     public void CreateGUI()
