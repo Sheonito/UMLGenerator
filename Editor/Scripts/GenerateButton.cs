@@ -75,6 +75,12 @@ public class GenerateButton : Button
                 GetScriptTypes(typeNames);
             }
         }
+
+        ViewOptionToggle allDependenciesToggle = root.Q<ViewOptionToggle>(UMLGeneratorView.k_allDependenciesToggle);
+        allDependenciesToggle.style.display = DisplayStyle.Flex;
+        
+        SaveUMLButton saveUmlButton = root.Q<SaveUMLButton>();
+        saveUmlButton.style.display = DisplayStyle.Flex;
     }
 
     private string[] GetFolderTypeNames(string dirPath)

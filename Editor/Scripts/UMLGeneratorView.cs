@@ -7,4 +7,5 @@ public class UMLGeneratorView
     public static readonly string k_folderObjectField = "FolderObjectField";
     public static readonly string k_buttonAdd = "Button-add";
     public static readonly string k_ButtonExecute = "Button-execute";
+    public static readonly string k_allDependenciesToggle = "toggle-allDependencies";
 }

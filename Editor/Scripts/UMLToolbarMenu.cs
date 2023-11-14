@@ -48,6 +48,12 @@ public class UMLToolbarMenu : ToolbarMenu
         // ObjectField 추가 버튼
         Button addButton = root.Q<Button>("Button-add");
         addButton.RegisterCallback<ClickEvent>(AddObjectField);
+        
+        ViewOptionToggle allDependenciesToggle = root.Q<ViewOptionToggle>(UMLGeneratorView.k_allDependenciesToggle);
+        allDependenciesToggle.style.display = DisplayStyle.None;
+        
+        SaveUMLButton saveUmlButton = root.Q<SaveUMLButton>();
+        saveUmlButton.style.display = DisplayStyle.None;
     }
 
     private void AddObjectField(ClickEvent evt)

@@ -11,6 +11,7 @@ using UnityEditor.UIElements;
 public class UMLGenerator : EditorWindow
 {
     public static VisualElement root;
+    public static UMLGenerator Instance;
     private UMLView umlView;
     
     [MenuItem("Tools/UMLGenerator")]
@@ -23,6 +24,7 @@ public class UMLGenerator : EditorWindow
 
     public void CreateGUI()
     {
+        Instance = this;
         // Each editor window contains a root VisualElement object
         root = rootVisualElement;
         

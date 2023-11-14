@@ -53,6 +53,16 @@ public class UMLView : GraphView
         nodes.ForEach(node => node.ConnectInput(nodes));
     }
 
+    public void ShowAllNodes()
+    {
+        
+    }
+
+    public void ShowSelectedNodes()
+    {
+        
+    }
+
     private void GetNode(ScriptInfo scriptInfo)
     {
         UMLNode umlNode = CreateScriptNode(scriptInfo.scriptName,scriptInfo);
