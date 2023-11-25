@@ -5,4 +5,6 @@ public class ScriptInfo
     public List<ScriptInfo> referenceScriptInfos = new List<ScriptInfo>();
     public string scriptName;
     public bool isReferenced;
+    public bool isMonoScript;
+    public bool hasParent;
 }

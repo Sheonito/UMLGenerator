@@ -2,7 +2,8 @@
     <Style src="project://database/Packages/com.lucecita.sdk/Editor/USS/UMLGenerator.uss?fileID=7433441132597879392&amp;guid=84cc197db768c3048833ac8abf5bf9ef&amp;type=3#UMLGenerator" />
     <uie:Toolbar name="Toolbar">
         <UMLToolbarMenu text="Menu" name="toolbar-menu" />
-        <ViewOptionToggle focusable="true" tabindex="0" value="false" text=" Show all dependencies" name="toggle-allDependencies" style="width: 169px; align-items: stretch; white-space: nowrap; left: 9%; display: none;" />
+        <ui:Label text="View Option&#10;" display-tooltip-when-elided="true" name="label-viewOption" style="left: 9%; display: none; -unity-text-align: upper-center; white-space: nowrap; margin-top: 3px;" />
+        <ViewOptionDropDown index="0" name="dropDown-viewOption" choices="All,Selected,Referring,Referenced,Mono" style="left: 9%; display: none;" />
         <SaveUMLButton text="Save UML" name="SaveUMLButton" style="border-left-width: 0; align-items: flex-end; left: 74.5%; display: none;" />
     </uie:Toolbar>
     <SplitView fixed-pane-initial-dimension="150" name="umlView-page" style="display: none;">

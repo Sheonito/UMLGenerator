@@ -27,6 +27,7 @@ public class GenerateButton : Button
     private UMLView umlView;
 
     public List<string> filePath = new List<string>();
+    private List<string> typeNames = new List<string>();
     private List<Type> scripts = new List<Type>();
     private List<ScriptInfo> scriptInfoList = new List<ScriptInfo>();
 
@@ -48,6 +49,21 @@ public class GenerateButton : Button
 
         if (umlView == null)
             umlView = root.Q<UMLView>();
+
+
+        foreach (var path in filePath)
+        {
+            if (path.Contains(".cs"))
+            {
+                string[] names = GetTypeNames(path);
+                typeNames.AddRange(names);
+            }
+            else
+            {
+                string[] names = GetFolderTypeNames(path);
+                typeNames.AddRange(names);
+            }
+        }
 
         for (int i = 0; i < filePath.Count; i++)
         {
@@ -76,11 +92,16 @@ public class GenerateButton : Button
             }
         }
 
-        ViewOptionToggle allDependenciesToggle = root.Q<ViewOptionToggle>(UMLGeneratorView.k_allDependenciesToggle);
-        allDependenciesToggle.style.display = DisplayStyle.Flex;
-        
-        SaveUMLButton saveUmlButton = root.Q<SaveUMLButton>();
-        saveUmlButton.style.display = DisplayStyle.Flex;
+        ViewNavigation.Instance.Push(UMLGeneratorView.k_umlViewPage);
+        root.Q<UMLToolbarMenu>(UMLGeneratorView.k_toolbarMenu).text = "UML View";
+        root.Q<UMLView>().SetMenu(true);
+        ViewOptionDropDown viewOptionDropDown = root.Q<ViewOptionDropDown>(UMLGeneratorView.k_viewOptionDropDown);
+        {
+            viewOptionDropDown.SetValueWithoutNotify(ViewOption.All.ToString());
+        }
+
+        // UML 노드 생성
+        EditorCoroutineUtility.StartCoroutine(umlView.PopulateView(scriptInfoList, ViewOption.All), this);
     }
 
     private string[] GetFolderTypeNames(string dirPath)
@@ -142,8 +163,8 @@ public class GenerateButton : Button
     private string[] GetTypeNames(string path)
     {
         List<string> typeNames = new List<string>();
-
-        string scriptText = AssetDatabase.LoadAssetAtPath<TextAsset>(path).text;
+        TextAsset scriptTextAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+        string scriptText = scriptTextAsset.text;
         bool insideCommentBlock = false;
         string[] lines = scriptText.Split('\n');
 
@@ -167,9 +188,9 @@ public class GenerateButton : Button
             }
 
             if ((trimmedLine.Contains("class ") ||
-                trimmedLine.Contains("interface ") ||
-                trimmedLine.Contains("enum ") ||
-                trimmedLine.Contains("struct ")) && trimmedLine.Contains("\"") == false)
+                 trimmedLine.Contains("interface ") ||
+                 trimmedLine.Contains("enum ") ||
+                 trimmedLine.Contains("struct ")) && trimmedLine.Contains("\"") == false)
             {
                 string[] words = trimmedLine.Split(' ');
 
@@ -203,8 +224,11 @@ public class GenerateButton : Button
                     .FirstOrDefault(t => t.Name == typeName);
 
                 scripts.Add(script);
+
                 ScriptInfo info = new ScriptInfo();
+                bool isMonoScript = typeof(MonoBehaviour).IsAssignableFrom(script);
                 info.scriptName = script.Name;
+                info.isMonoScript = isMonoScript;
                 scriptInfoList.Add(info);
                 // 디버깅
                 // Debug.Log("scriptName: " + script.Name);
@@ -223,11 +247,6 @@ public class GenerateButton : Button
         {
             GetScriptInfo(scripts[i]);
         }
-
-        // UML 노드 생성
-        ViewNavigation.Instance.Push(UMLGeneratorView.k_umlViewPage);
-
-        EditorCoroutineUtility.StartCoroutine(umlView.PopulateView(scriptInfoList), this);
     }
 
     private void GetScriptInfo(Type script)
@@ -244,6 +263,7 @@ public class GenerateButton : Button
             {
                 ScriptInfo referScriptInfo = new ScriptInfo();
                 referScriptInfo.scriptName = script.BaseType.Name;
+                referScriptInfo.hasParent = true;
                 referScriptInfo.isReferenced = true;
                 scriptInfo.referenceScriptInfos.Add(referScriptInfo);
             }
@@ -343,7 +363,7 @@ public class GenerateButton : Button
             if (isBuiltInDll)
                 return;
 
-            IList<Instruction> instructions = null; 
+            IList<Instruction> instructions = null;
             try
             {
                 instructions = methodInfo.GetInstructions();
@@ -357,39 +377,39 @@ public class GenerateButton : Button
 
             if (instructions == null)
                 return;
-            
+
             foreach (var instruction in instructions)
             {
                 if (instruction.Operand == null)
                     continue;
-            
+
                 if (instruction.Operand is MemberInfo info)
                 {
                     Type declaringType = info.DeclaringType;
                     if (declaringType == null || declaringType.AssemblyQualifiedName.Contains("["))
                         continue;
-            
+
                     // 디버깅
                     // Debug.Log(declaringType.Module.Name);
                     // Debug.Log($"Instruction: {instruction.OpCode} Operand Type: {declaringType}");
-            
+
                     bool isContained =
                         scriptInfo.referenceScriptInfos.Exists(x => x.scriptName == declaringType.Name);
-            
+
                     bool isbuiltInDll = IsBuiltInDll(declaringType.Module.Name);
                     bool isLambdaMethod = IsLambdaMethod(declaringType.Name);
                     if (!isContained && !isbuiltInDll && !isLambdaMethod)
                     {
-                        ScriptInfo childInfo = new ScriptInfo
-                        {
-                            scriptName = declaringType.Name,
-                            isReferenced = true
-                        };
+                        bool isSelectedScript = typeNames.Exists(name => name == declaringType.Name);
+                        ScriptInfo childInfo = new ScriptInfo();
+                        childInfo.scriptName = declaringType.Name;
+                        childInfo.isReferenced = !isSelectedScript;
+
                         scriptInfo.referenceScriptInfos.Add(childInfo);
-            
+
                         // 디버깅
                         // Debug.Log(declaringType.Name + "/" + scriptInfo.scriptName);
-            
+
                         // 참조 Script면서, 유니티 폴더에 있는 Script
                         if (scriptInfoList.Exists(x => x.scriptName == childInfo.scriptName) == false)
                         {
@@ -404,7 +424,7 @@ public class GenerateButton : Button
 
     private bool IsBuiltInDll(string moduleName)
     {
-        string[] builtInDll = new[] { "mscorlib", "UnityEngine", "UnityEditor", "System.Core", "Unity.","System." };
+        string[] builtInDll = new[] { "mscorlib", "UnityEngine", "UnityEditor", "System.Core", "Unity.", "System." };
         bool isBuiltInDll = builtInDll.Any(dllName => moduleName.Contains(dllName));
 
         return isBuiltInDll;

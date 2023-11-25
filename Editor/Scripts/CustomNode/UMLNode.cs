@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 
 public class UMLNode : Node
 {
-    private ScriptInfo scriptInfo;
+    public ScriptInfo scriptInfo;
     private Node ownerNode;
     public List<UMLEdge> edges = new List<UMLEdge>();
     public VisualElement border;
