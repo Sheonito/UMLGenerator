@@ -283,7 +283,8 @@ public class GenerateButton : Button
                 ScriptInfo derivedScriptInfo = new ScriptInfo();
                 derivedScriptInfo.scriptName = derivedType.Name;
                 derivedScriptInfo.isReferenced = true;
-                scriptInfo.referenceScriptInfos.Add(derivedScriptInfo);
+                derivedScriptInfo.referenceScriptInfos.Add(scriptInfo);
+                scriptInfoList.Add(derivedScriptInfo);
             }
         }
 
