@@ -255,7 +255,7 @@ public class GenerateButton : Button
         members = members.OrderBy(member => member.DeclaringType.FullName).ToArray();
         ScriptInfo scriptInfo = scriptInfoList.Find(info => info.scriptName == script.Name);
 
-        // 상속 참조 추가
+        // 부모 참조 추가
         if (script.BaseType != null && script.BaseType != script)
         {
             string moduleName = script.BaseType.Module.Name;
@@ -266,6 +266,24 @@ public class GenerateButton : Button
                 referScriptInfo.hasParent = true;
                 referScriptInfo.isReferenced = true;
                 scriptInfo.referenceScriptInfos.Add(referScriptInfo);
+            }
+        }
+        
+        // 자식 참조 추가
+        var derivedTypes = script.Assembly
+            .GetTypes()
+            .Where(t => script.IsAssignableFrom(t) && t != script)
+            .ToList();
+
+        foreach (var derivedType in derivedTypes)
+        {
+            string moduleName = derivedType.BaseType.Module.Name;
+            if (IsBuiltInDll(moduleName) == false)
+            {
+                ScriptInfo derivedScriptInfo = new ScriptInfo();
+                derivedScriptInfo.scriptName = derivedType.Name;
+                derivedScriptInfo.isReferenced = true;
+                scriptInfo.referenceScriptInfos.Add(derivedScriptInfo);
             }
         }
 
