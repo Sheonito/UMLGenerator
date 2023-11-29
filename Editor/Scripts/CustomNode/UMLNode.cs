@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using PlasticGui;
+using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -27,6 +29,12 @@ public class UMLNode : Node
         this.scriptInfo = scriptInfo;
         this.border = this.Q<VisualElement>("node-border");
     }
+    
+    public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+    {
+        evt.menu.AppendAction("Summarize With GPT",null);
+    }
+    
 
     public override void Select(VisualElement selectionContainer, bool additive)
     {

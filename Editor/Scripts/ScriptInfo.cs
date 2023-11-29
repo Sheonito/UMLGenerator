@@ -6,5 +6,4 @@ public class ScriptInfo
     public string scriptName;
     public bool isReferenced;
     public bool isMonoScript;
-    public bool hasParent;
 }

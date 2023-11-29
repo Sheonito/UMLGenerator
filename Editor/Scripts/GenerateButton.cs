@@ -263,7 +263,6 @@ public class GenerateButton : Button
             {
                 ScriptInfo referScriptInfo = new ScriptInfo();
                 referScriptInfo.scriptName = script.BaseType.Name;
-                referScriptInfo.hasParent = true;
                 referScriptInfo.isReferenced = true;
                 scriptInfo.referenceScriptInfos.Add(referScriptInfo);
             }

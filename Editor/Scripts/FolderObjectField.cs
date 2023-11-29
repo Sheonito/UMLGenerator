@@ -43,7 +43,7 @@ public class FolderObjectField : ObjectField
                 path = path.Substring(path.IndexOf('/') + 1);
                 path = "Assets/" + path;
 
-                GenerateButton generateButton = root.Q<GenerateButton>(UMLGeneratorView.k_ButtonExecute);
+                GenerateButton generateButton = root.Q<GenerateButton>(UMLGeneratorView.k_buttonExecute);
                 generateButton.filePath.Add(path);
             }
         }

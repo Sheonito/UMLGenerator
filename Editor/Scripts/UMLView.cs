@@ -75,12 +75,6 @@ public class UMLView : GraphView
                     .ToList()
                     .ForEach(GetNode);
                 break;
-
-            case ViewOption.Referring:
-                break;
-
-            case ViewOption.Referenced:
-                break;
         }
 
 
@@ -107,6 +101,9 @@ public class UMLView : GraphView
 
         SaveUMLButton saveUmlButton = root.Q<SaveUMLButton>();
         saveUmlButton.style.display = displayStyle;
+
+        ConsoleView consoleView = root.Q<ConsoleView>();
+        consoleView.style.display = displayStyle;
     }
 
     private void GetNode(ScriptInfo scriptInfo)
