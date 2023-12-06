@@ -14,8 +14,6 @@ public class ConsoleView : VisualElement
     private bool isOnTextArea;
     public ConsoleView()
     {
-
-        
         EditorCoroutineUtility.StartCoroutine(Init(), this);
     }
 
@@ -33,21 +31,31 @@ public class ConsoleView : VisualElement
     {
         if (!isOnTextArea)
         {
-            isOnTextArea = true;
-            
-            Length heightLength = new Length(30, LengthUnit.Percent); 
-            this.style.height = new StyleLength(heightLength);
-            VisualElement textArea = root.Q(UMLGeneratorView.k_consoleTextArea);
-            textArea.style.display = DisplayStyle.Flex;
+            ShowConsoleView();
         }
         else
         {
-            isOnTextArea = false;
-            
-            Length heightLength = new Length(20, LengthUnit.Pixel); 
-            this.style.height = new StyleLength(heightLength);
-            VisualElement textArea = root.Q(UMLGeneratorView.k_consoleTextArea);
-            textArea.style.display = DisplayStyle.None;
+            HideConsoleView();
         }
+    }
+
+    public void ShowConsoleView()
+    {
+        isOnTextArea = true;
+            
+        Length heightLength = new Length(30, LengthUnit.Percent); 
+        this.style.height = new StyleLength(heightLength);
+        VisualElement textArea = root.Q(UMLGeneratorView.k_consoleTextArea);
+        textArea.style.display = DisplayStyle.Flex;
+    }
+
+    public void HideConsoleView()
+    {
+        isOnTextArea = false;
+            
+        Length heightLength = new Length(20, LengthUnit.Pixel); 
+        this.style.height = new StyleLength(heightLength);
+        VisualElement textArea = root.Q(UMLGeneratorView.k_consoleTextArea);
+        textArea.style.display = DisplayStyle.None;
     }
 }

@@ -1,11 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 using PlasticGui;
+using UMLAutoGenerator;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -20,21 +25,75 @@ public class UMLNode : Node
     public Port leftPort;
     public Port rightPort;
     private UMLView m_umlView;
+    private VisualElement root;
 
-    public UMLNode(Node ownerNode, UMLView mUmlView, ScriptInfo scriptInfo) : base("Packages/com.lucecita.sdk/Editor/Uxml/NodeView.uxml")
+    public UMLNode(Node ownerNode, UMLView mUmlView, ScriptInfo scriptInfo) : base(
+        "Packages/com.lucecita.sdk/Editor/Uxml/NodeView.uxml")
     {
         this.ownerNode = ownerNode;
         this.title = ownerNode.title;
         this.m_umlView = mUmlView;
         this.scriptInfo = scriptInfo;
         this.border = this.Q<VisualElement>("node-border");
+        root = UMLGenerator.root;
     }
-    
+
     public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
     {
-        evt.menu.AppendAction("Summarize With GPT",null);
+        evt.menu.AppendAction("Analyze With GPT", OnClickAnalyzeWithGPT());
     }
-    
+
+    private Action<DropdownMenuAction> OnClickAnalyzeWithGPT()
+    {
+        return (action) => AnalyzeScript();
+    }
+
+    private async void AnalyzeScript()
+    {
+        string apiKey = PlayerPrefs.GetString("UMLGeneratorAPIKey");
+        if (string.IsNullOrEmpty(apiKey))
+        {
+            GPTKeyInputWindow.ShowWindow(AnalyzeScript);
+            return;
+        }
+
+        TextField consoleTextField = root.Q<TextField>(UMLGeneratorView.k_consoleTextFieldGPT);
+        ConsoleView consoleView = root.Q<ConsoleView>(UMLGeneratorView.k_consoleView);
+        consoleView.ShowConsoleView();
+
+        Type scriptType = scriptInfo.scriptType;
+        string ilCode = CodeReader.GetILCode(scriptType);
+
+        GPTStreamHandler.apiKey = apiKey;
+        GPTStreamHandler.RequestData requestData = new GPTStreamHandler.RequestData();
+        GPTStreamHandler.Message systemMessage = new GPTStreamHandler.Message()
+        {
+            role = "system",
+            content = "너는 내가 짠 유니티 C#코드를 IL Code로 요청을 받을 것이고 그것을 클래스로 바꿀거야."
+        };
+        GPTStreamHandler.Message systemMessage2 = new GPTStreamHandler.Message()
+        {
+            role = "system",
+            content = "코드에 대한 요약과 피드백을 줘. 반드시 카테고리를 요약과 피드백 2개로 나누어서 말해야만 해"
+        };
+        GPTStreamHandler.Message requestMessage = new GPTStreamHandler.Message() { role = "user", content = ilCode };
+        requestData.messages = new List<GPTStreamHandler.Message>() { systemMessage, systemMessage2,requestMessage };
+        GPTStreamHandler.Message responseMessage = new GPTStreamHandler.Message() { role = "system", content = null };
+        CancellationTokenSource cts = new CancellationTokenSource();
+        await foreach (var chunk in GPTStreamHandler.CreateCompletionRequestAsStream(requestData, cts.Token))
+        {
+            string role = chunk.choices[0].delta.role;
+
+            if (role != null)
+            {
+                responseMessage.role = role;
+            }
+
+            responseMessage.content += chunk.choices[0].delta.content;
+            consoleTextField.value = responseMessage.content;
+        }
+    }
+
 
     public override void Select(VisualElement selectionContainer, bool additive)
     {
@@ -49,7 +108,7 @@ public class UMLNode : Node
             node.border.style.borderBottomWidth = 1;
             node.border.style.borderLeftWidth = 1;
             node.border.style.borderRightWidth = 1;
-            
+
             if (node.edges.Count == 0)
                 continue;
 
@@ -61,7 +120,8 @@ public class UMLNode : Node
                     if (edge.TargetNode == this && node != this)
                     {
                         edge.TargetNode.Add(edge);
-                        edge.style.top = edge.ParentNode.resolvedStyle.top - edge.TargetNode.resolvedStyle.top - edge.TargetNode.border.resolvedStyle.height + 0.5f; // 0.5f를 더해야 하는 이유 찾아야 함
+                        edge.style.top = edge.ParentNode.resolvedStyle.top - edge.TargetNode.resolvedStyle.top -
+                            edge.TargetNode.border.resolvedStyle.height + 0.5f; // 0.5f를 더해야 하는 이유 찾아야 함
                         edge.style.left = edge.ParentNode.resolvedStyle.left - edge.TargetNode.resolvedStyle.left;
 
                         line.Select();
@@ -78,7 +138,7 @@ public class UMLNode : Node
                 }
             }
         }
-        
+
         border.style.borderTopColor = new Color(0.3840512f, 0.770284f, 0.8773585f);
         border.style.borderBottomColor = new Color(0.3840512f, 0.770284f, 0.8773585f);
         border.style.borderLeftColor = new Color(0.3840512f, 0.770284f, 0.8773585f);
@@ -87,7 +147,7 @@ public class UMLNode : Node
         border.style.borderBottomWidth = 2;
         border.style.borderLeftWidth = 2;
         border.style.borderRightWidth = 2;
-        
+
         edges.ForEach(edge => edge.edgeElements.ForEach(line => line.Select()));
     }
 

@@ -18,7 +18,9 @@
                 <ui:Button text="Console" display-tooltip-when-elided="true" name="button-console" style="width: 70px; background-image: none; background-color: rgba(125, 125, 125, 0); -unity-text-outline-color: rgb(0, 0, 0); border-left-color: rgb(126, 126, 126); border-right-color: rgb(126, 126, 126); border-top-color: rgb(126, 126, 126); border-bottom-color: rgba(126, 126, 126, 0); -unity-background-image-tint-color: rgb(88, 88, 88);" />
                 <ui:VisualElement name="border-line" style="flex-shrink: 0; border-left-color: rgb(125, 125, 125); border-right-color: rgb(125, 125, 125); border-top-color: rgb(125, 125, 125); border-bottom-color: rgb(125, 125, 125); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px;" />
                 <ui:VisualElement name="console-area" style="display: none; height: 150px;">
-                    <ui:Label display-tooltip-when-elided="true" name="label-gpt" style="white-space: flex; display: flex;" />
+                    <ui:ScrollView>
+                        <ui:TextField readonly="true" name="textField-consoleGPT" focusable="true" multiline="true" picking-mode="Ignore" style="white-space: normal; flex-shrink: 0; flex-grow: 0; height: auto; background-color: rgba(0, 0, 0, 0); border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0);" />
+                    </ui:ScrollView>
                 </ui:VisualElement>
             </ConsoleView>
         </ui:VisualElement>

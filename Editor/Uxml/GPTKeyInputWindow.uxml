@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:TextField picking-mode="Ignore" label="API Key" value="filler text" name="textfield-gptApiKey" style="top: 5px;" />
+    <ui:Label text="Only authorize firstime" display-tooltip-when-elided="true" name="label-apiKeyDescription" style="top: 10%; margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px;" />
+    <ui:Label display-tooltip-when-elided="true" name="label-gptApiKeyLog" style="top: 10%; margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px;" />
+    <ui:Button text="Apply" display-tooltip-when-elided="true" name="button-gptApiApply" style="top: 15%; bottom: auto; position: relative;" />
+</ui:UXML>

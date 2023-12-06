@@ -229,6 +229,7 @@ public class GenerateButton : Button
                 bool isMonoScript = typeof(MonoBehaviour).IsAssignableFrom(script);
                 info.scriptName = script.Name;
                 info.isMonoScript = isMonoScript;
+                info.scriptType = script;
                 scriptInfoList.Add(info);
                 // 디버깅
                 // Debug.Log("scriptName: " + script.Name);
@@ -264,6 +265,7 @@ public class GenerateButton : Button
                 ScriptInfo referScriptInfo = new ScriptInfo();
                 referScriptInfo.scriptName = script.BaseType.Name;
                 referScriptInfo.isReferenced = true;
+                referScriptInfo.scriptType = script.BaseType;
                 scriptInfo.referenceScriptInfos.Add(referScriptInfo);
             }
         }
@@ -281,6 +283,7 @@ public class GenerateButton : Button
             {
                 ScriptInfo derivedScriptInfo = new ScriptInfo();
                 derivedScriptInfo.scriptName = derivedType.Name;
+                derivedScriptInfo.scriptType = derivedType; 
                 derivedScriptInfo.isReferenced = true;
                 derivedScriptInfo.referenceScriptInfos.Add(scriptInfo);
                 scriptInfoList.Add(derivedScriptInfo);
@@ -388,9 +391,9 @@ public class GenerateButton : Button
             }
             catch
             {
-                Debug.Log("methodInfo.DeclaringType.Module.Name: " + methodInfo.DeclaringType.Module.Name);
-                Debug.Log("methodInfo.DeclaringType: " + methodInfo.DeclaringType);
-                Debug.Log("methodInfo.Name: " + methodInfo.Name);
+                // Debug.Log("methodInfo.DeclaringType.Module.Name: " + methodInfo.DeclaringType.Module.Name);
+                // Debug.Log("methodInfo.DeclaringType: " + methodInfo.DeclaringType);
+                // Debug.Log("methodInfo.Name: " + methodInfo.Name);
             }
 
             if (instructions == null)
@@ -421,6 +424,7 @@ public class GenerateButton : Button
                         bool isSelectedScript = typeNames.Exists(name => name == declaringType.Name);
                         ScriptInfo childInfo = new ScriptInfo();
                         childInfo.scriptName = declaringType.Name;
+                        childInfo.scriptType = declaringType;
                         childInfo.isReferenced = !isSelectedScript;
 
                         scriptInfo.referenceScriptInfos.Add(childInfo);

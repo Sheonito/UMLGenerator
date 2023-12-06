@@ -12,4 +12,8 @@ public class UMLGeneratorView
     public static readonly string k_consoleView = "console-view";
     public static readonly string k_buttonConsole = "button-console";
     public static readonly string k_consoleTextArea = "console-area";
+    public static readonly string k_consoleTextFieldGPT = "textField-consoleGPT";
+    public static readonly string k_textfieldGptApiKey = "textfield-gptApiKey";
+    public static readonly string k_buttonGptApiApply = "button-gptApiApply";
+    public static readonly string k_labelGptApiKeyLog = "label-gptApiKeyLog";
 }
