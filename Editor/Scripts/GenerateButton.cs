@@ -41,6 +41,10 @@ public class GenerateButton : Button
     {
         scripts.Clear();
         scriptInfoList.Clear();
+        TextField consoleTextField = root.Q<TextField>(UMLGeneratorView.k_consoleTextFieldGPT);
+        ConsoleView consoleView = root.Q<ConsoleView>(UMLGeneratorView.k_consoleView);
+        consoleTextField.value = null;
+        consoleView.HideConsoleView();
     }
 
     private void GenerateUML(ClickEvent evt)
@@ -70,13 +74,6 @@ public class GenerateButton : Button
             // 단일 스크립트
             if (filePath[i].Contains(".cs"))
             {
-                // string[] words = filePath[i].Split('/');
-                // int index = words.Length - 1;
-                // string scriptName = words[index].Replace(".cs", "");
-                // scriptName = scriptName.Replace("<T>", "`1");
-
-                // GetScriptTypes(new string[] { scriptName });
-
                 string[] typeNames = GetTypeNames(filePath[i]);
 
                 // 모든 타입 가져오기
@@ -262,11 +259,12 @@ public class GenerateButton : Button
             string moduleName = script.BaseType.Module.Name;
             if (IsBuiltInDll(moduleName) == false)
             {
-                ScriptInfo referScriptInfo = new ScriptInfo();
-                referScriptInfo.scriptName = script.BaseType.Name;
-                referScriptInfo.isReferenced = true;
-                referScriptInfo.scriptType = script.BaseType;
-                scriptInfo.referenceScriptInfos.Add(referScriptInfo);
+                ScriptInfo referringScriptInfo = new ScriptInfo();
+                referringScriptInfo.scriptName = script.BaseType.Name;
+                referringScriptInfo.isReferenced = true;
+                referringScriptInfo.scriptType = script.BaseType;
+                scriptInfo.referringScriptInfos.Add(referringScriptInfo);
+                referringScriptInfo.referencedScriptInfos.Add(scriptInfo);
             }
         }
         
@@ -285,7 +283,8 @@ public class GenerateButton : Button
                 derivedScriptInfo.scriptName = derivedType.Name;
                 derivedScriptInfo.scriptType = derivedType; 
                 derivedScriptInfo.isReferenced = true;
-                derivedScriptInfo.referenceScriptInfos.Add(scriptInfo);
+                derivedScriptInfo.referringScriptInfos.Add(scriptInfo);
+                scriptInfo.referencedScriptInfos.Add(derivedScriptInfo);
                 scriptInfoList.Add(derivedScriptInfo);
             }
         }
@@ -415,7 +414,7 @@ public class GenerateButton : Button
                     // Debug.Log($"Instruction: {instruction.OpCode} Operand Type: {declaringType}");
 
                     bool isContained =
-                        scriptInfo.referenceScriptInfos.Exists(x => x.scriptName == declaringType.Name);
+                        scriptInfo.referringScriptInfos.Exists(x => x.scriptName == declaringType.Name);
 
                     bool isbuiltInDll = IsBuiltInDll(declaringType.Module.Name);
                     bool isLambdaMethod = IsLambdaMethod(declaringType.Name);
@@ -427,7 +426,8 @@ public class GenerateButton : Button
                         childInfo.scriptType = declaringType;
                         childInfo.isReferenced = !isSelectedScript;
 
-                        scriptInfo.referenceScriptInfos.Add(childInfo);
+                        scriptInfo.referringScriptInfos.Add(childInfo);
+                        childInfo.referringScriptInfos.Add(scriptInfo);
 
                         // 디버깅
                         // Debug.Log(declaringType.Name + "/" + scriptInfo.scriptName);

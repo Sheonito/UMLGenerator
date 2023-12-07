@@ -41,11 +41,17 @@ public class UMLNode : Node
     public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
     {
         evt.menu.AppendAction("Analyze With GPT", OnClickAnalyzeWithGPT());
+        evt.menu.AppendAction("Show Dependencies about this Node", OnClickShowDependencies());
     }
 
     private Action<DropdownMenuAction> OnClickAnalyzeWithGPT()
     {
         return (action) => AnalyzeScript();
+    }
+
+    private Action<DropdownMenuAction> OnClickShowDependencies()
+    {
+        return (action) => ShowDependencies();
     }
 
     private async void AnalyzeScript()
@@ -92,6 +98,11 @@ public class UMLNode : Node
             responseMessage.content += chunk.choices[0].delta.content;
             consoleTextField.value = responseMessage.content;
         }
+    }
+
+    private void ShowDependencies()
+    {
+        EditorCoroutineUtility.StartCoroutine(m_umlView.PopulateView(new List<ScriptInfo>(){scriptInfo}, ViewOption.All), this);
     }
 
 
@@ -207,7 +218,7 @@ public class UMLNode : Node
 
     public void ConnectInput(List<UMLNode> nodes)
     {
-        var targetInfos = scriptInfo.referenceScriptInfos.Where(info => nodes.Any(node =>
+        var targetInfos = scriptInfo.referringScriptInfos.Where(info => nodes.Any(node =>
             EqualScriptName(node.title, info.scriptName) &&
             EqualScriptName(ownerNode.title, info.scriptName) == false));
 

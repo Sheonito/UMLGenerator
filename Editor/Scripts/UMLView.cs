@@ -61,6 +61,7 @@ public class UMLView : GraphView
         {
             case ViewOption.All:
                 scriptInfoList.ForEach(GetNode);
+                scriptInfoList.ForEach(GetReferringNode);
                 scriptInfoList.ForEach(GetReferencedNode);
                 break;
 
@@ -111,14 +112,26 @@ public class UMLView : GraphView
         UMLNode umlNode = CreateScriptNode(scriptInfo.scriptName, scriptInfo);
     }
 
-    private void GetReferencedNode(ScriptInfo scriptInfo)
+    private void GetReferringNode(ScriptInfo scriptInfo)
     {
-        int referenceTypeCount = scriptInfo.referenceScriptInfos.Count;
+        int referenceTypeCount = scriptInfo.referringScriptInfos.Count;
         if (referenceTypeCount > 0)
         {
             for (int i = 0; i < referenceTypeCount; i++)
             {
-                CreateScriptNode(scriptInfo.referenceScriptInfos[i].scriptName, scriptInfo.referenceScriptInfos[i]);
+                CreateScriptNode(scriptInfo.referringScriptInfos[i].scriptName, scriptInfo.referringScriptInfos[i]);
+            }
+        }
+    }
+
+    private void GetReferencedNode(ScriptInfo scriptInfo)
+    {
+        int referenceTypeCount = scriptInfo.referencedScriptInfos.Count;
+        if (referenceTypeCount > 0)
+        {
+            for (int i = 0; i < referenceTypeCount; i++)
+            {
+                CreateScriptNode(scriptInfo.referencedScriptInfos[i].scriptName, scriptInfo.referencedScriptInfos[i]);
             }
         }
     }
