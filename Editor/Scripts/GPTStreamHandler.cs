@@ -85,13 +85,13 @@ namespace UMLAutoGenerator
         [System.Serializable]
         public class RequestData
         {
-            public string model = "gpt-3.5-turbo";
+            public string model = "gpt-3.5-turbo-1106";
             public List<Message> messages;
             public float temperature; // [0.0 - 2.0]
             public float top_p;
             public bool stream = true;
             public List<string> stop = null;
-            public int max_tokens = 1000;
+            public int max_tokens = 4096;
             public float presence_penalty;
             public float frequency_penalty;
             public Dictionary<int, int> logit_bias = null;

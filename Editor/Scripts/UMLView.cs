@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using UMLAutoGenerator;
 using Unity.EditorCoroutines.Editor;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -138,7 +140,9 @@ public class UMLView : GraphView
 
     private UMLNode CreateScriptNode(string scriptName, ScriptInfo info)
     {
-        scriptName = scriptName.Replace("`1", "<T>");
+        if (info.scriptType.IsGenericType)
+            scriptName = ReplaceGenericScriptName(scriptName);
+
         bool isContained = nodes.Exists(node => node.title == scriptName);
         if (!isContained)
         {
@@ -150,17 +154,32 @@ public class UMLView : GraphView
             nodes.Add(umlNode);
             AddElement(umlNode);
 
-            // 노드 라벨 생성
-            // Label nodeLabel = new Label("Label");
-            // nodeLabel.style.backgroundColor = new StyleColor(Color.grey);
-            // scriptNode.Add(nodeLabel);
-
             EditorCoroutineUtility.StartCoroutine(UpdateNodePosition(umlNode), this);
 
             return umlNode;
         }
 
         return null;
+    }
+
+    private string ReplaceGenericScriptName(string scriptName)
+    {
+        string[] genericNames = new string[] { "T", "U", "O", "Q", "E", "R" };
+        int.TryParse(scriptName.Split('`')[1], out int genericCount);
+
+        StringBuilder genericName = new StringBuilder();
+        genericName.Append("<");
+        for (int i = 0; i < genericCount; i++)
+        {
+            if (i != 0)
+                genericName.Append(",");
+
+            genericName.Append(genericNames[i]);
+        }
+
+        genericName.Append(">");
+        scriptName = scriptName.Replace($"`{genericCount}", genericName.ToString());
+        return scriptName;
     }
 
     private Node preNode;

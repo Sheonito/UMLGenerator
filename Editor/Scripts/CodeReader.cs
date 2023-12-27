@@ -4,34 +4,72 @@ using System.Text;
 using Mono.Reflection;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer.Internal;
+using UnityEditor;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace UMLAutoGenerator
 {
     public class CodeReader
     {
-        public static string GetILCode(Type type)
+        public static string GetTypeCode(Type type)
         {
             StringBuilder result = new StringBuilder();
-            MemberInfo[] members = type.GetDeclaredMembers();
 
-            foreach (MemberInfo memberInfo in members)
+            // 유니티 Object일 경우
+            if (type.IsSubclassOf(typeof(UnityEngine.Object)))
             {
-                if (memberInfo is FieldInfo fieldInfo)
+                string[] allPaths = AssetDatabase.GetAllAssetPaths();
+
+                foreach (string path in allPaths)
                 {
-                    result.Append(fieldInfo.GetAccessorType());
-                    result.Append(fieldInfo.FieldType);
-                    result.Append(fieldInfo.Name);
+                    if (path.Contains(type.Name))
+                    {
+                        MonoScript monoScript = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+                        Type monoType = monoScript.GetClass();
+                        if (monoType != null && monoType.FullName == type.FullName)
+                        {
+                            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(monoScript, out string guid, out long _);
+
+                            if (guid != null)
+                            {
+                                string resultPath = AssetDatabase.GUIDToAssetPath(guid);
+                                resultPath = resultPath.Substring(resultPath.IndexOf('/') + 1);
+                                resultPath = "Assets/" + resultPath;
+                                TextAsset scriptTextAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(resultPath);
+                                result.Append(scriptTextAsset.text);
+
+                                return result.ToString();
+                            }
+                        }
+                    }
                 }
             }
-            
-            foreach (MemberInfo memberInfo in members)
+            // 그 외
+            else
             {
-                if (memberInfo is MethodInfo methodInfo)
+                MemberInfo[] members = type.GetDeclaredMembers();
+
+                foreach (MemberInfo memberInfo in members)
                 {
-                    var instructions = methodInfo.GetInstructions();
-                    foreach (var instruction in instructions)
+                    if (memberInfo is FieldInfo fieldInfo)
                     {
-                        result.Append(instruction);
+                        result.Append(fieldInfo.Attributes);
+                        result.Append(fieldInfo.GetAccessorType());
+                        result.Append(fieldInfo.FieldType);
+                        result.Append(fieldInfo.Name);
+                    }
+                }
+
+                foreach (MemberInfo memberInfo in members)
+                {
+                    if (memberInfo is MethodInfo methodInfo)
+                    {
+                        var instructions = methodInfo.GetInstructions();
+                        foreach (var instruction in instructions)
+                        {
+                            result.Append(instruction);
+                        }
                     }
                 }
             }

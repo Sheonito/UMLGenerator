@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Mono.Reflection;
+using UMLAutoGenerator;
 using Unity.EditorCoroutines.Editor;
 using Unity.VisualScripting.FullSerializer.Internal;
 using UnityEditor;
@@ -144,7 +145,26 @@ public class GenerateButton : Button
                     {
                         string typeName = words[nameIndex + 1].TrimEnd(':').Trim();
                         typeName = typeName.Split(new[] { "//", "/*" }, StringSplitOptions.RemoveEmptyEntries)[0];
-                        typeName = typeName.Replace("<T>", "`1");
+
+                        if (typeName.Contains("<"))
+                        {
+                            int startIndex = typeName.IndexOf("<");
+                            int lastIndex = typeName.Length - 1;
+                            int removeCount = (lastIndex - startIndex) + 1;
+                            if (typeName.Contains(","))
+                            {
+                                int commaCount = typeName.Count(character => character == ',');
+                                int genericCount = commaCount + 1;
+                                typeName = typeName.Remove(startIndex, removeCount);
+                                typeName = typeName.Insert(startIndex, $"`{genericCount}");
+                            }
+                            else
+                            {
+                                typeName = typeName.Remove(startIndex, removeCount);
+                                typeName = typeName.Insert(startIndex, "`1");
+                            }
+                        }
+
                         typeNames.Add(typeName);
 
                         // 디버깅
@@ -191,13 +211,31 @@ public class GenerateButton : Button
             {
                 string[] words = trimmedLine.Split(' ');
 
-                int nameIndex = Array.FindIndex(words,
-                    w => w == "class" || w == "interface" || w == "enum" || w == "struct");
+                int nameIndex = Array.FindIndex(words, w => w == "class" || w == "interface" || w == "enum" || w == "struct");
                 if (nameIndex + 1 < words.Length)
                 {
                     string typeName = words[nameIndex + 1].TrimEnd(':').Trim();
                     typeName = typeName.Split(new[] { "//", "/*" }, StringSplitOptions.RemoveEmptyEntries)[0];
-                    typeName = typeName.Replace("<T>", "`1");
+
+                    if (typeName.Contains("<"))
+                    {
+                        int startIndex = typeName.IndexOf("<");
+                        int lastIndex = typeName.Length - 1;
+                        int removeCount = (lastIndex - startIndex) + 1;
+                        if (typeName.Contains(","))
+                        {
+                            int commaCount = typeName.Count(character => character == ',');
+                            int genericCount = commaCount + 1;
+                            typeName = typeName.Remove(startIndex, removeCount);
+                            typeName = typeName.Insert(startIndex, $"`{genericCount}");
+                        }
+                        else
+                        {
+                            typeName = typeName.Remove(startIndex, removeCount);
+                            typeName = typeName.Insert(startIndex, "`1");
+                        }
+                    }
+
                     typeNames.Add(typeName);
 
                     // 디버깅
@@ -211,14 +249,22 @@ public class GenerateButton : Button
 
     private void GetScriptTypes(string[] typeNames)
     {
-        foreach (string typeName in typeNames)
+        for (int i = 0; i < typeNames.Length; i++)
         {
+            string typeName = typeNames[i];
             if (!string.IsNullOrEmpty(typeName) && !string.IsNullOrWhiteSpace(typeName))
             {
                 Type script = AppDomain.CurrentDomain
                     .GetAssemblies()
                     .SelectMany(ass => ass.GetTypes())
                     .FirstOrDefault(t => t.Name == typeName);
+
+
+                if (script == null)
+                {
+                    Debug.LogError($"Couldn't load scriptname of {typeName} from assembly script");
+                    continue;
+                }
 
                 scripts.Add(script);
 
@@ -232,7 +278,6 @@ public class GenerateButton : Button
                 // Debug.Log("scriptName: " + script.Name);
             }
         }
-
 
         // 함수와 변수 가져오기
         GetScriptsInfo();
@@ -249,7 +294,9 @@ public class GenerateButton : Button
 
     private void GetScriptInfo(Type script)
     {
-        MemberInfo[] members = script.GetDeclaredMembers();
+        MemberInfo[] members = script.GetDeclaredMembers()
+                                     .Where(member => member.DeclaringType.Assembly.GetName().Name == "Assembly-CSharp")
+                                     .ToArray();
         members = members.OrderBy(member => member.DeclaringType.FullName).ToArray();
         ScriptInfo scriptInfo = scriptInfoList.Find(info => info.scriptName == script.Name);
 
@@ -267,7 +314,7 @@ public class GenerateButton : Button
                 referringScriptInfo.referencedScriptInfos.Add(scriptInfo);
             }
         }
-        
+
         // 자식 참조 추가
         var derivedTypes = script.Assembly
             .GetTypes()
@@ -281,7 +328,7 @@ public class GenerateButton : Button
             {
                 ScriptInfo derivedScriptInfo = new ScriptInfo();
                 derivedScriptInfo.scriptName = derivedType.Name;
-                derivedScriptInfo.scriptType = derivedType; 
+                derivedScriptInfo.scriptType = derivedType;
                 derivedScriptInfo.isReferenced = true;
                 derivedScriptInfo.referringScriptInfos.Add(scriptInfo);
                 scriptInfo.referencedScriptInfos.Add(derivedScriptInfo);
@@ -377,10 +424,8 @@ public class GenerateButton : Button
         }
         else if (memberInfo is MethodInfo methodInfo)
         {
-            // 디버깅
-            // Debug.Log(methodInfo.DeclaringType.Module.Name);
             bool isBuiltInDll = IsBuiltInDll(methodInfo.DeclaringType.Module.Name);
-            if (isBuiltInDll)
+            if (isBuiltInDll || methodInfo.Attributes.HasFlag(MethodAttributes.Abstract))
                 return;
 
             IList<Instruction> instructions = null;
@@ -390,9 +435,9 @@ public class GenerateButton : Button
             }
             catch
             {
-                // Debug.Log("methodInfo.DeclaringType.Module.Name: " + methodInfo.DeclaringType.Module.Name);
-                // Debug.Log("methodInfo.DeclaringType: " + methodInfo.DeclaringType);
-                // Debug.Log("methodInfo.Name: " + methodInfo.Name);
+                Debug.Log("methodInfo.DeclaringType.Module.Name: " + methodInfo.DeclaringType.Module.Name);
+                Debug.Log("methodInfo.DeclaringType: " + methodInfo.DeclaringType);
+                Debug.Log("methodInfo.Name: " + methodInfo.Name);
             }
 
             if (instructions == null)
@@ -426,17 +471,22 @@ public class GenerateButton : Button
                         childInfo.scriptType = declaringType;
                         childInfo.isReferenced = !isSelectedScript;
 
-                        scriptInfo.referringScriptInfos.Add(childInfo);
-                        childInfo.referringScriptInfos.Add(scriptInfo);
-
                         // 디버깅
                         // Debug.Log(declaringType.Name + "/" + scriptInfo.scriptName);
 
                         // 참조 Script면서, 유니티 폴더에 있는 Script
                         if (scriptInfoList.Exists(x => x.scriptName == childInfo.scriptName) == false)
                         {
+                            scriptInfo.referringScriptInfos.Add(childInfo);
+                            childInfo.referencedScriptInfos.Add(scriptInfo);
                             scriptInfoList.Add(childInfo);
                             GetScriptInfo(declaringType);
+                        }
+                        else
+                        {
+                            ScriptInfo referringScriptInfo = scriptInfoList.Find(info => info.scriptName == childInfo.scriptName);
+                            referringScriptInfo.referencedScriptInfos.Add(scriptInfo);
+                            scriptInfo.referringScriptInfos.Add(referringScriptInfo);
                         }
                     }
                 }
